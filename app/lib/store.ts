@@ -23,7 +23,7 @@ type AddCustomer = {
 type CustomerStore = {
   customers: Customer[];
   add: (customer: Customer) => void;
-  remove: (customer: Customer) => void;
+  remove: (id: string) => void;
   update: (customer: Customer) => void;
 };
 
@@ -39,9 +39,9 @@ export const useCustomersStore = create<CustomerStore>((set) => ({
         },
       ],
     })),
-  remove: (customer: Customer) =>
+  remove: (id: string) =>
     set((state: CustomerStore) => ({
-      customers: [...state.customers, customer],
+      customers: state.customers.filter((customer) => customer.id !== id),
     })),
   update: (customer: Customer) =>
     set((state: CustomerStore) => ({

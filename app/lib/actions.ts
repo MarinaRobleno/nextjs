@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 
 import { z } from "zod";
 import { signIn } from "@/auth";
+import { useCustomersStore } from "./store";
+import { CustomersTable } from "./definitions";
 
 // ...
 
@@ -116,5 +118,35 @@ export async function deleteInvoice(id: string) {
     return { message: "Deleted Invoice" };
   } catch (error) {
     return { message: "Database Error: Failed to Delete Invoice" };
+  }
+}
+
+export async function addCustomer(customer: CustomersTable) {
+  console.log("customer", customer);
+  try {
+    await sql`
+      INSERT INTO customers (name, email, image_url)
+      VALUES (${customer.name}, ${customer.email}, ${customer.image_url})
+    `;
+
+    // Optionally, revalidate the data or navigate to the customers page
+    revalidatePath("/dashboard/customers");
+
+    return { message: "Added Customer" };
+  } catch (error) {
+    return { message: "Database Error: Failed to Add Customer" };
+  }
+}
+
+export async function deleteCustomer(id: string) {
+  try {
+    await sql`DELETE FROM customers WHERE id = ${id}`;
+
+    // Optionally, revalidate the data or navigate to the customers page
+    revalidatePath("/dashboard/customers");
+
+    return { message: "Deleted Customer" };
+  } catch (error) {
+    return { message: "Database Error: Failed to Delete Customer" };
   }
 }

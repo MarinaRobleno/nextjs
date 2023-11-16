@@ -1,16 +1,20 @@
 "use client";
+import { useEffect } from "react";
 import Image from "next/image";
 import { lusitana } from "@/app/ui/fonts";
 import Search from "@/app/ui/search";
 import { CustomersTable, FormattedCustomersTable } from "@/app/lib/definitions";
 import { useCustomersStore } from "@/app/lib/store";
+import { DeleteButton } from "./delete-customer";
+import AddCustomerButton from "./add-customer";
 
 export default async function CustomersTable() {
-  const customers = useCustomersStore((state) => state.customers);
+  const { customers } = useCustomersStore();
 
   return (
     <div className="w-full">
       <Search placeholder="Search customers..." />
+      <AddCustomerButton />
       <div className="mt-6 flow-root">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
@@ -74,6 +78,9 @@ export default async function CustomersTable() {
                     <th scope="col" className="px-4 py-5 font-medium">
                       Total Paid
                     </th>
+                    <th scope="col" className="px-4 py-5 font-medium">
+                      Action
+                    </th>
                   </tr>
                 </thead>
 
@@ -103,6 +110,9 @@ export default async function CustomersTable() {
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
                         {customer.total_paid}
+                      </td>
+                      <td className="whitespace-nowrap bg-white py-5 pl-6 pr-3 text-sm">
+                        <DeleteButton id={customer.id} />
                       </td>
                     </tr>
                   ))}

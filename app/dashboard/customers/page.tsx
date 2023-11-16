@@ -6,7 +6,6 @@ import { Suspense } from "react";
 
 import { useCustomersStore } from "@/app/lib/store";
 import { fetchCustomers } from "@/app/lib/data";
-import AddCustomerButton from "@/app/ui/customers/add-customer";
 import StoreInitializer from "@/app/ui/customers/store-initializer";
 
 export default async function Page() {
@@ -19,7 +18,7 @@ export default async function Page() {
       <div className="flex w-full items-center justify-between">
         <h1 className={`${lusitana.className} text-2xl`}>Customers</h1>
       </div>
-      <AddCustomerButton />
+
       <Suspense fallback={<InvoicesTableSkeleton />}>
         <Table />
       </Suspense>
