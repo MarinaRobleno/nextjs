@@ -10,6 +10,7 @@ import StoreInitializer from "@/app/ui/customers/store-initializer";
 
 export default async function Page() {
   const customers = await fetchCustomers();
+  console.log("customers", customers);
   useCustomersStore.setState({ customers });
 
   return (

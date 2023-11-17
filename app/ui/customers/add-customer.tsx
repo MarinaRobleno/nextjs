@@ -1,6 +1,7 @@
 import { useCustomersStore } from "@/app/lib/store";
 import { Button } from "../button";
 import { addCustomer } from "@/app/lib/actions";
+import Link from "next/link";
 
 export default function AddCustomerButton() {
   const dummyCustomer = {
@@ -21,11 +22,16 @@ export default function AddCustomerButton() {
   };
 
   return (
-    <Button
-      onClick={handleAddCustomer}
-      className="flex items-center justify-center rounded-lg bg-blue-500 hover:bg-blue-600 text-white px-4 py-2"
-    >
-      Add Dummy
-    </Button>
+    // <Button
+    //   onClick={handleAddCustomer}
+    //   className="flex items-center justify-center rounded-lg bg-blue-500 hover:bg-blue-600 text-white px-4 py-2"
+    // >
+    //   Add Dummy
+    // </Button>
+    <Link href="/dashboard/customers/create">
+      <Button className="flex items-center justify-center rounded-lg bg-blue-500 hover:bg-blue-600 text-white px-4 py-2">
+        Add a new customer
+      </Button>
+    </Link>
   );
 }
