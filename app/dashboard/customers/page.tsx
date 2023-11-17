@@ -10,18 +10,18 @@ import StoreInitializer from "@/app/ui/customers/store-initializer";
 
 export default async function Page() {
   const customers = await fetchCustomers();
-  console.log("customers", customers);
-  useCustomersStore.setState({ customers });
+  // console.log("customers", customers);
+  // useCustomersStore.setState({ customers });
 
   return (
     <div className="w-full">
-      <StoreInitializer customers={customers} />
+      {/* <StoreInitializer customers={customers} /> */}
       <div className="flex w-full items-center justify-between">
         <h1 className={`${lusitana.className} text-2xl`}>Customers</h1>
       </div>
 
       <Suspense fallback={<InvoicesTableSkeleton />}>
-        <Table />
+        <Table customers={customers} />
       </Suspense>
     </div>
   );

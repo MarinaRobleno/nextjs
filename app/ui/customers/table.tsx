@@ -8,8 +8,12 @@ import { useCustomersStore } from "@/app/lib/store";
 import { DeleteButton } from "./delete-customer";
 import AddCustomerButton from "./add-customer";
 
-export default async function CustomersTable() {
-  const { customers } = useCustomersStore();
+export default async function CustomersTable({
+  customers,
+}: {
+  customers: FormattedCustomersTable[];
+}) {
+  // const { customers } = useCustomersStore();
 
   return (
     <div className="w-full">
