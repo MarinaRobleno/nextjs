@@ -60,7 +60,7 @@ const CreateFormCustomers: React.FC<CreateFormCustomersProps> = () => {
       await addCustomer(data);
       add(data);
       //   navigate to the customers page
-      redirect("/dashboard/customers");
+    //   redirect("/dashboard/customers");
     } catch (error) {
       console.error("Error adding customer:", error);
       // Handle the error, e.g., display an error message to the user

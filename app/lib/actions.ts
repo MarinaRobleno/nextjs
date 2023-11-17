@@ -121,7 +121,32 @@ export async function deleteInvoice(id: string) {
   }
 }
 
+const CreateCustomer = z.object({
+  name: z.string({
+    invalid_type_error: "Please enter a name.",
+  }),
+  email: z.string({
+    invalid_type_error: "Please enter an email.",
+  }),
+  image_url: z.string({
+    invalid_type_error: "Please enter an image URL.",
+  }),
+});
+
 export async function addCustomer(customer: CustomersTable) {
+  const validatedFields = CreateCustomer.safeParse({
+    name: customer.name,
+    email: customer.email,
+    image_url: customer.image_url,
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Missing Fields. Failed to Add Customer.",
+    };
+  }
+
   console.log("customer", customer);
   try {
     await sql`
