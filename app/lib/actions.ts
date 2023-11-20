@@ -6,9 +6,12 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { signIn } from "@/auth";
 import { useCustomersStore } from "./store";
-import { CustomersTable } from "./definitions";
+import { CustomersTable, UsersTable } from "./definitions";
+import { hash } from "bcrypt";
 
 // ...
+
+// AUTHENTICATION
 
 export async function authenticate(
   prevState: string | undefined,
@@ -23,6 +26,8 @@ export async function authenticate(
     throw error;
   }
 }
+
+// INVOICES
 
 const InvoiceSchema = z.object({
   id: z.string(),
@@ -121,6 +126,8 @@ export async function deleteInvoice(id: string) {
   }
 }
 
+// CUSTOMERS
+
 const CreateCustomer = z.object({
   name: z.string({
     invalid_type_error: "Please enter a name.",
@@ -173,5 +180,79 @@ export async function deleteCustomer(id: string) {
     return { message: "Deleted Customer" };
   } catch (error) {
     return { message: "Database Error: Failed to Delete Customer" };
+  }
+}
+
+// USERS
+const UserSchema = z.object({
+  id: z.string(),
+  name: z.string({
+    invalid_type_error: "Please enter a name.",
+  }),
+  email: z.string({
+    invalid_type_error: "Please enter an email.",
+  }),
+  password: z.string({
+    invalid_type_error: "Please enter a password.",
+  }),
+});
+// CreateUser should omit the id field and include the "confirmPassword" field
+const CreateUser = UserSchema.omit({ id: true }).extend({
+  confirmPassword: z.string({
+    invalid_type_error: "Please confirm your password.",
+  }),
+});
+
+export async function createUser(user: UsersTable) {
+  const validatedFields = CreateUser.safeParse({
+    name: user.name,
+    email: user.email,
+    password: user.password,
+    confirmPassword: user.confirmPassword,
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Missing Fields. Failed to Add User.",
+    };
+  }
+
+  // Check that the password and confirmPassword fields match
+  if (user.password !== user.confirmPassword) {
+    return {
+      errors: { confirmPassword: ["Passwords do not match."] },
+      message: "Passwords do not match. Failed to Add User.",
+    };
+  }
+
+  const { name, email, password } = validatedFields.data;
+
+  // Hash the password
+  const hashedPassword = await hash(password, 10);
+
+  try {
+    await sql`
+      INSERT INTO users (name, email, password)
+      VALUES (${name}, ${email}, ${hashedPassword})
+    `;
+
+    revalidatePath("/dashboard/users");
+
+    return { message: "Added User" };
+  } catch (error) {
+    return { message: "Database Error: Failed to Add User" };
+  }
+}
+
+export async function deleteUser(id: string) {
+  try {
+    await sql`DELETE FROM users WHERE id = ${id}`;
+
+    revalidatePath("/dashboard/users");
+
+    return { message: "Deleted User" };
+  } catch (error) {
+    return { message: "Database Error: Failed to Delete User" };
   }
 }

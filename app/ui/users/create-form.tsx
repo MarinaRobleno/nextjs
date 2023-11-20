@@ -1,0 +1,138 @@
+"use client";
+
+import { createUser } from "@/app/lib/actions";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const schema = z.object({
+  name: z.string().min(3).max(50),
+  email: z.string().email(),
+  password: z.string().min(6).max(50),
+  confirmPassword: z.string().min(6).max(50),
+});
+
+const defaultValues = {
+  id: String(Math.random().toString(36).substr(2, 9)),
+};
+
+interface FormValues {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
+interface CreateFormUsersProps {}
+
+const CreateFormUsers: React.FC<CreateFormUsersProps> = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>({
+    resolver: zodResolver(schema),
+    defaultValues, // Set default values for the form
+  });
+
+  const onSubmit = async (data: FormValues) => {
+    try {
+      await createUser(data);
+    } catch (error) {
+      console.error("Error adding customer:", error);
+      // Handle the error, e.g., display an error message to the user
+    }
+  };
+  return (
+    <div className="container mx-auto mt-6">
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        {/* <h1 className="text-2xl mb-4">Create Customer</h1> */}
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          <div className="mb-4">
+            <label htmlFor="name" className="block text-sm font-medium mb-2">
+              Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              {...register("name")}
+              className="w-full border border-gray-300 rounded-md py-2 px-3 placeholder-gray-500"
+            />
+            {errors.name && (
+              <p className="text-sm text-red-500 mt-1">{errors.name.message}</p>
+            )}
+          </div>
+
+          <div className="mb-4">
+            <label htmlFor="email" className="block text-sm font-medium mb-2">
+              Email
+            </label>
+            <input
+              type="text"
+              id="email"
+              {...register("email")}
+              className="w-full border border-gray-300 rounded-md py-2 px-3 placeholder-gray-500"
+            />
+            {errors.email && (
+              <p className="text-sm text-red-500 mt-1">
+                {errors.email.message}
+              </p>
+            )}
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium mb-2"
+            >
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              {...register("password")}
+              className="w-full border border-gray-300 rounded-md py-2 px-3 placeholder-gray-500"
+            />
+            {errors.password && (
+              <p className="text-sm text-red-500 mt-1">
+                {errors.password.message}
+              </p>
+            )}
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="confirmPassword"
+              className="block text-sm font-medium mb-2"
+            >
+              Confirm Password
+            </label>
+            <input
+              type="password"
+              id="confirmPassword"
+              {...register("confirmPassword")}
+              className="w-full border border-gray-300 rounded-md py-2 px-3 placeholder-gray-500"
+            />
+            {errors.confirmPassword && (
+              <p className="text-sm text-red-500 mt-1">
+                {errors.confirmPassword.message}
+              </p>
+            )}
+          </div>
+
+          {/* Non-editable fields */}
+
+          <button
+            type="submit"
+            className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-300"
+          >
+            Create Customer
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default CreateFormUsers;
