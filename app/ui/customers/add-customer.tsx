@@ -24,12 +24,12 @@ export default function AddCustomerButton() {
   return (
     // <Button
     //   onClick={handleAddCustomer}
-    //   className="flex items-center justify-center rounded-lg bg-blue-500 hover:bg-blue-600 text-white px-4 py-2"
+    //   className="flex items-center justify-center rounded-lg bg-purple-500 hover:bg-purple-600 text-white px-4 py-2"
     // >
     //   Add Dummy
     // </Button>
     <Link href="/dashboard/customers/create">
-      <Button className="flex items-center justify-center rounded-lg bg-blue-500 hover:bg-blue-600 text-white px-4 py-2">
+      <Button className="flex items-center justify-center rounded-lg bg-purple-500 hover:bg-purple-600 text-white px-4 py-2">
         Add a new customer
       </Button>
     </Link>
