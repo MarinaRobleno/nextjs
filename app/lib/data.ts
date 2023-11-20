@@ -238,6 +238,16 @@ export async function getUser(email: string) {
   }
 }
 
+export async function getUserById(id: string) {
+  try {
+    const user = await sql`SELECT * from USERS where id=${id}`;
+    return user.rows[0] as User;
+  } catch (error) {
+    console.error("Failed to fetch user:", error);
+    throw new Error("Failed to fetch user.");
+  }
+}
+
 export async function getAllUsers() {
   try {
     const users = await sql`SELECT * from USERS`;

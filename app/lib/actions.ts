@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { signIn } from "@/auth";
 import { useCustomersStore } from "./store";
-import { CustomersTable, UsersTable } from "./definitions";
+import { CustomersTable, UpdateUser, UsersTable } from "./definitions";
 import { hash } from "bcrypt";
 
 // ...
@@ -154,7 +154,6 @@ export async function addCustomer(customer: CustomersTable) {
     };
   }
 
-  console.log("customer", customer);
   try {
     await sql`
       INSERT INTO customers (name, email, image_url)
@@ -162,12 +161,11 @@ export async function addCustomer(customer: CustomersTable) {
     `;
 
     // Optionally, revalidate the data or navigate to the customers page
-    revalidatePath("/dashboard/customers");
-
-    return { message: "Added Customer" };
   } catch (error) {
     return { message: "Database Error: Failed to Add Customer" };
   }
+  revalidatePath("/dashboard/customers");
+  redirect("/dashboard/customers");
 }
 
 export async function deleteCustomer(id: string) {
@@ -175,12 +173,10 @@ export async function deleteCustomer(id: string) {
     await sql`DELETE FROM customers WHERE id = ${id}`;
 
     // Optionally, revalidate the data or navigate to the customers page
-    revalidatePath("/dashboard/customers");
-
-    return { message: "Deleted Customer" };
   } catch (error) {
     return { message: "Database Error: Failed to Delete Customer" };
   }
+  revalidatePath("/dashboard/customers");
 }
 
 // USERS
@@ -202,6 +198,8 @@ const CreateUser = UserSchema.omit({ id: true }).extend({
     invalid_type_error: "Please confirm your password.",
   }),
 });
+
+const UpdateUser = UserSchema.omit({ id: true, password: true });
 
 export async function createUser(user: UsersTable) {
   const validatedFields = CreateUser.safeParse({
@@ -236,23 +234,46 @@ export async function createUser(user: UsersTable) {
       INSERT INTO users (name, email, password)
       VALUES (${name}, ${email}, ${hashedPassword})
     `;
-
-    revalidatePath("/dashboard/users");
-
-    return { message: "Added User" };
   } catch (error) {
     return { message: "Database Error: Failed to Add User" };
   }
+  revalidatePath("/dashboard/users");
+  redirect("/dashboard/users");
 }
 
 export async function deleteUser(id: string) {
   try {
     await sql`DELETE FROM users WHERE id = ${id}`;
-
-    revalidatePath("/dashboard/users");
-
-    return { message: "Deleted User" };
   } catch (error) {
     return { message: "Database Error: Failed to Delete User" };
   }
+  revalidatePath("/dashboard/users");
+}
+
+export async function updateUser(user: UpdateUser) {
+  const validatedFields = UpdateUser.safeParse({
+    name: user.name,
+    email: user.email,
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Missing Fields. Failed to Update User.",
+    };
+  }
+
+  const { name, email } = validatedFields.data;
+
+  try {
+    await sql`
+      UPDATE users
+      SET name = ${name}, email = ${email}
+      WHERE id = ${user.id}
+    `;
+  } catch (error) {
+    return { message: "Database Error: Failed to Update User" };
+  }
+  revalidatePath("/dashboard/users");
+  redirect("/dashboard/users");
 }

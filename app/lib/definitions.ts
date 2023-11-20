@@ -92,10 +92,23 @@ export type InvoiceForm = {
   status: "pending" | "paid";
 };
 
+export type UserDb = {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+};
+
 export type UsersTable = {
   id: string;
   name: string;
   email: string;
   password: string;
   confirmPassword: string;
+};
+
+export type UpdateUser = {
+  id: string;
+  name: string;
+  email: string;
 };
