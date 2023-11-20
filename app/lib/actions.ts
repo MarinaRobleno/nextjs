@@ -169,6 +169,7 @@ export async function addCustomer(customer: CustomersTable) {
 }
 
 export async function deleteCustomer(id: string) {
+  console.log("deleteCustomer", id);
   try {
     await sql`DELETE FROM customers WHERE id = ${id}`;
 

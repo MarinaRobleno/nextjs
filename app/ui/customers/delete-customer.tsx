@@ -2,19 +2,14 @@ import { deleteCustomer } from "@/app/lib/actions";
 import { useCustomersStore } from "@/app/lib/store";
 import { TrashIcon } from "@heroicons/react/24/outline";
 
-export const DeleteButton = ({ id }: { id: string }) => {
-  const handleDeleteCustomer = (id: string) => {
-    deleteCustomer(id);
-    useCustomersStore.setState((state) => ({
-      customers: state.customers.filter((customer) => customer.id !== id),
-    }));
-  };
+export function DeleteButton({ id }: { id: string }) {
+  const deleteCustomerById = deleteCustomer.bind(null, id);
   return (
-    <button
-      className="text-red-500 hover:text-red-600"
-      onClick={() => handleDeleteCustomer(id)}
-    >
-      <TrashIcon className="w-5" />
-    </button>
+    <form action={deleteCustomerById}>
+      <button className="rounded-md border p-2 hover:bg-gray-100">
+        <span className="sr-only">Delete</span>
+        <TrashIcon className="w-5" />
+      </button>
+    </form>
   );
-};
+}

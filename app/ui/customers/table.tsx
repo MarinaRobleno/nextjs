@@ -1,24 +1,20 @@
-"use client";
-import { useEffect } from "react";
 import Image from "next/image";
-import { lusitana } from "@/app/ui/fonts";
-import Search from "@/app/ui/search";
-import { CustomersTable, FormattedCustomersTable } from "@/app/lib/definitions";
-import { useCustomersStore } from "@/app/lib/store";
+import { CustomersTable } from "@/app/lib/definitions";
 import { DeleteButton } from "./delete-customer";
-import AddCustomerButton from "./add-customer";
+import { fetchFilteredCustomers } from "@/app/lib/data";
 
 export default async function CustomersTable({
-  customers,
+  query,
+  currentPage,
 }: {
-  customers: FormattedCustomersTable[];
+  query: string;
+  currentPage: number;
 }) {
   // const { customers } = useCustomersStore();
+  const customers = await fetchFilteredCustomers(query, currentPage);
 
   return (
     <div className="w-full">
-      <Search placeholder="Search customers..." />
-      <AddCustomerButton />
       <div className="mt-6 flow-root">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">

@@ -8,6 +8,7 @@ import { addCustomer } from "@/app/lib/actions";
 import { Button, TextField, Typography, Container, Box } from "@mui/material";
 import { useCustomersStore } from "@/app/lib/store";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 // Define the schema for validation using Zod
 const schema = z.object({
@@ -124,12 +125,20 @@ const CreateFormCustomers: React.FC<CreateFormCustomersProps> = () => {
           <input type="hidden" {...register("total_pending")} />
           <input type="hidden" {...register("total_paid")} />
 
-          <button
-            type="submit"
-            className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-300"
-          >
-            Create Customer
-          </button>
+          <div className="mt-6 flex justify-end gap-4">
+            <Link
+              href="/dashboard/customers"
+              className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
+            >
+              Cancel
+            </Link>
+            <button
+              type="submit"
+              className="flex h-10 items-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 active:bg-blue-600 aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
+            >
+              Create Customer
+            </button>
+          </div>
         </form>
       </div>
     </div>
